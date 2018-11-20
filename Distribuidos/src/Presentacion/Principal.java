@@ -3,14 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package GUI;
+package Presentacion;
 
+import Negocio.Tracker;
+import Model.Peer;
+import Model.enumStateUser;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
@@ -22,11 +26,13 @@ import javax.swing.table.DefaultTableModel;
 public class Principal extends javax.swing.JFrame {
     
     public List<File> listaArchivos = new ArrayList<>();
+    private Tracker tracker;
 
     /**
      * Creates new form Principal
      */
     public Principal() {
+        this.tracker = new Tracker(this);
         initComponents();
         centreWindow(Principal.this);
         clearTables();
@@ -292,6 +298,35 @@ public class Principal extends javax.swing.JFrame {
     }
     
     
+    public void updatePeers(List<Peer> swarm) {
+
+        //JOptionPane.showMessageDialog(this, swarm.size());
+        
+//        vaciarModelo(this.modelPeers);
+//        
+//        for (Peer p : swarm) {           
+//            String [] datos={p.getIp(),""};
+//            this.modelPeers.addRow(datos);
+//        }
+
+    }
+    
+    public void updateFiles(Map<String, Map<Peer,enumStateUser> > mapFiles) {
+
+        //JOptionPane.showMessageDialog(this, swarm.size());
+        
+//        vaciarModelo(this.modelFiles);
+//        
+//        for (Map.Entry<String, Map<Peer,enumStateUser> > entry : mapFiles.entrySet()) {
+//            
+//            for (Map.Entry<Peer,enumStateUser> entryFile : entry.getValue().entrySet()) {
+//                String [] datos={entry.getKey(),entryFile.getKey().getIp(),entryFile.getValue().toString()};
+//                this.modelFiles.addRow(datos);
+//            }
+//            
+//        }
+    
+    }
     
     
 
