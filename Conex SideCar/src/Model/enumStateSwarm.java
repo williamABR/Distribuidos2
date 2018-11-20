@@ -5,10 +5,6 @@
  */
 package Model;
 
-/**
- *
- * @author Michael
- */
 public enum enumStateSwarm {
     ONLINE, OFFLINE, RUNNING
 }

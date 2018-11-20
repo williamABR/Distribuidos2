@@ -10,10 +10,7 @@ import Model.enumStateFile;
 import java.rmi.Remote;
 import java.util.List;
 
-/**
- *
- * @author Michael
- */
+
 public interface InterfaceAddresses extends Remote{
     
     public List<Peer> addressesToFile(String nameFile) throws Exception;

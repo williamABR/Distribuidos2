@@ -7,10 +7,7 @@ package Hilos;
 
 import Negocio.Tracker;
 
-/**
- *
- * @author Michael
- */
+
 public class RunTimeConnection implements Runnable{
 
     private Tracker tracker;

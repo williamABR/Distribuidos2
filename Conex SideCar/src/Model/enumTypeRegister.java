@@ -5,10 +5,7 @@
  */
 package Model;
 
-/**
- *
- * @author Michael
- */
+
 public enum enumTypeRegister {
     REGISTER, UPDATE
 }

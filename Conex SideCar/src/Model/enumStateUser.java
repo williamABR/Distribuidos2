@@ -5,10 +5,8 @@
  */
 package Model;
 
-/**
- *
- * @author Michael
- */
+
+
 public enum enumStateUser {
     LEECHER, SEED
 }

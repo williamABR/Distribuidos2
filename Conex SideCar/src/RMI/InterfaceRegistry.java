@@ -9,10 +9,7 @@ import Model.Register;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-/**
- *
- * @author Michael
- */
+
 public interface InterfaceRegistry extends Remote{
     
     public boolean register(Register register) throws RemoteException;

@@ -16,10 +16,7 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author Michael
- */
+
 public class RegistryImplements extends UnicastRemoteObject implements InterfaceRegistry{
     
     private Tracker tracker;

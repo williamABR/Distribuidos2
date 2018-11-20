@@ -8,10 +8,7 @@ package RMI;
 import Model.Piece;
 import java.rmi.Remote;
 
-/**
- *
- * @author Michael
- */
+
 public interface InterfaceRunTime  extends Remote{
     
     public boolean start() throws Exception;

@@ -13,10 +13,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
-/**
- *
- * @author Michael
- */
+
 public class AddressesImplements extends UnicastRemoteObject implements InterfaceAddresses{
 
     private Tracker tracker;

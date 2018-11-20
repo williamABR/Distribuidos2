@@ -9,10 +9,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
- * @author Michael
- */
 public class File implements Serializable{
     private String name;
     private enumStateFile state;

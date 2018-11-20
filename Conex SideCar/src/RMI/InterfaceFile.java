@@ -8,10 +8,7 @@ package RMI;
 import Model.Piece;
 import java.rmi.Remote;
 
-/**
- *
- * @author Michael
- */
+
 public interface InterfaceFile  extends Remote{
     
     public Piece downloadPiece(String nameFile, int n) throws Exception;

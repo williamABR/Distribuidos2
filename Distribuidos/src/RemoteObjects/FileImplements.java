@@ -12,10 +12,7 @@ import RMI.InterfaceFile;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-/**
- *
- * @author Michael
- */
+
 public class FileImplements extends UnicastRemoteObject implements InterfaceFile {
 
     private Tracker tracker;

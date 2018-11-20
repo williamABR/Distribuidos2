@@ -7,10 +7,7 @@ package Model;
 
 import java.io.Serializable;
 
-/**
- *
- * @author Michael
- */
+
 public class Piece implements Serializable{
     
     private String data;

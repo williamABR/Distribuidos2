@@ -9,10 +9,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Michael
- */
 public class Register implements Serializable {
  
     private String ipClient;

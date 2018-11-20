@@ -9,10 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Michael
- */
+
 public class Peer implements Serializable{
     private String ip;
     private List<File> files;

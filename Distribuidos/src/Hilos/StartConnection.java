@@ -20,10 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-/**
- *
- * @author Michael
- */
+
 public class StartConnection extends Thread{
 
     private Tracker tracker;
