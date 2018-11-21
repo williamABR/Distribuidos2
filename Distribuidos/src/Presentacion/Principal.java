@@ -262,6 +262,7 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSubirActionPerformed
 
     private void btnExaminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExaminarActionPerformed
+        clearTables();
         selectFile();
     }//GEN-LAST:event_btnExaminarActionPerformed
 
@@ -356,9 +357,9 @@ public class Principal extends javax.swing.JFrame {
     
     private void readFile(File file) throws FileNotFoundException, IOException{
         
-        
         BufferedReader br = new BufferedReader(new FileReader(file.getName()));
         DefaultTableModel model = (DefaultTableModel) tableFiles.getModel();
+        model.setRowCount(0);
         labelSelected.setText(file.getName());
         try {
             StringBuilder sb = new StringBuilder();
@@ -380,14 +381,21 @@ public class Principal extends javax.swing.JFrame {
                     }
                 }
             }
+            
+            btnSubir.setEnabled(isSubidaOk() ? true : false);
+            
             String completo =  sb.toString();
+            
         } finally {
             br.close();
-        }
-        
-    
+        }    
     }
     
+    public boolean isSubidaOk(){
+        DefaultTableModel model = (DefaultTableModel) tableFiles.getModel(); 
+        for (int i = 0; i < model.getRowCount(); i++) if (model.getValueAt(i, 1).equals("No encontrado"))return false;
+        return true;
+    }
     
     public void updatePeers(List<Peer> swarm) {
 
