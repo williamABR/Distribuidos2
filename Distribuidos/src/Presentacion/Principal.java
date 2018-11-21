@@ -9,6 +9,7 @@ import Negocio.Tracker;
 import Model.Peer;
 import Model.enumStateFile;
 import Model.enumStateUser;
+import Negocio.MixPot;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -22,8 +23,10 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +45,7 @@ public class Principal extends javax.swing.JFrame {
     
     private final String SI_EXISTE = "Encontrado";
     private final String NO_EXISTE = "No encontrado";
+    private final String CREADO = "Archivo generado";
     private final int TAM_ESTANDAR = 8;
     
     private List<File> listaArchivos = new ArrayList<>();
@@ -74,7 +78,7 @@ public class Principal extends javax.swing.JFrame {
         jComboBox1 = new javax.swing.JComboBox<>();
         btnDescargar = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tableDownloads = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         btnExaminar = new javax.swing.JToggleButton();
@@ -89,8 +93,10 @@ public class Principal extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Archivos");
+        jLabel1.setEnabled(false);
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setEnabled(false);
 
         btnDescargar.setText("Descargar");
         btnDescargar.addActionListener(new java.awt.event.ActionListener() {
@@ -99,22 +105,19 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tableDownloads.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null},
-                {null},
-                {null},
-                {null}
+
             },
             new String [] {
-                "Nombre"
+                "Nombre", "Estado", "Generado en"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -125,7 +128,7 @@ public class Principal extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane3.setViewportView(jTable2);
+        jScrollPane3.setViewportView(tableDownloads);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -349,6 +352,12 @@ public class Principal extends javax.swing.JFrame {
         for (int i = 0; i < model.getRowCount() ; i++) {
             model.removeRow(i);
         }
+        
+        model = (DefaultTableModel) tableDownloads.getModel();
+        for (int i = 0; i < model.getRowCount() ; i++) {
+            model.removeRow(i);
+        }
+        model.setRowCount(0);
     }
     
     //Escoger un archivo 
@@ -429,29 +438,58 @@ public class Principal extends javax.swing.JFrame {
         }
         
         if (!nameFile.equals(NO_EXISTE)) {
-            List<String> lines = mixFiles();
+            List<String> lines = mixFiles(nameFile);
             String[] strarray = new String[lines.size()];
             lines.toArray(strarray);
             lines = Arrays.asList(strarray);
             Path file = Paths.get(nameFile);
             Files.write(file, lines, Charset.forName("UTF-8"));
+            Date dNow = new Date( );
+            SimpleDateFormat ft = new SimpleDateFormat ("hh:mm:ss a");
+            DefaultTableModel model = (DefaultTableModel) tableDownloads.getModel(); 
+            model.addRow(new Object[]{nameFile, CREADO,ft.format(dNow)});
+            
             System.out.println(" -> Archivo creado con éxito!");
+            
         }else{
             System.err.println("No existe fuente para descargar archivos.");
             System.err.println("(Ya probaste subir archivos primero?)");
         }
         
-        
 
     }
     
-    public List<String> mixFiles(){
+    //Con los archivos existentes generar el nuevo
+    public List<String> mixFiles(String nameFile) throws FileNotFoundException, IOException{
         
+        List<MixPot> listaMixer = new ArrayList<>();
         List<String> lineasArchivos = new ArrayList<>();
+        int tamToMix = hashMapArchivos.get(nameFile).size();
         
         for (int i = 0; i < TAM_ESTANDAR ; i++) {
-            String agregar = "a"+i;
-            lineasArchivos.add(agregar);
+            int elElegido = (int) (Math.random() * tamToMix) + 0;
+            MixPot mix = new MixPot(i, hashMapArchivos.get(nameFile).get(elElegido));
+            listaMixer.add(mix);
+        }
+        
+        
+        for (int i = 0; i < TAM_ESTANDAR ; i++) {
+            
+            try(BufferedReader br = new BufferedReader(new FileReader(listaMixer.get(i).getArchivo().getName()))) {
+                int contador = 0;
+                for(String line; (line = br.readLine()) != null; ) {
+                    
+                    if (listaMixer.get(i).getLinea() == contador) {
+                        String agregar = line;
+                        lineasArchivos.add(agregar);
+                    }
+                    
+                    contador++;
+                    
+                }
+                // line is not visible here.
+            }
+            
         }
                 
         return lineasArchivos;
@@ -503,9 +541,9 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable jTable2;
     private javax.swing.JLabel labelSelected;
     private javax.swing.JLabel nameGenerate;
+    private javax.swing.JTable tableDownloads;
     private javax.swing.JTable tableFiles;
     // End of variables declaration//GEN-END:variables
 }
