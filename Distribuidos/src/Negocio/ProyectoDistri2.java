@@ -22,17 +22,17 @@ public class ProyectoDistri2 {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws FileNotFoundException, IOException {
-      String cadena;
-      ArrayList<String> informacion = new ArrayList<String>();
-      String archivos[]={"prueba1.txt","prueba2.txt","prueba3.txt"};
-      for(int i = 0 ; i<archivos.length ; i++){
-        FileReader f = new FileReader(archivos[i]);
-        BufferedReader b = new BufferedReader(f);
-        while((cadena = b.readLine())!=null) {
-            informacion.add(cadena);
-        }
-        b.close();
-      } 
+//      String cadena;
+//      ArrayList<String> informacion = new ArrayList<String>();
+//      String archivos[]={"prueba1.txt","prueba2.txt","prueba3.txt"};
+//      for(int i = 0 ; i<archivos.length ; i++){
+//        FileReader f = new FileReader(archivos[i]);
+//        BufferedReader b = new BufferedReader(f);
+//        while((cadena = b.readLine())!=null) {
+//            informacion.add(cadena);
+//        }
+//        b.close();
+//      } 
       Principal vista = new Principal();
       vista.show();
     }

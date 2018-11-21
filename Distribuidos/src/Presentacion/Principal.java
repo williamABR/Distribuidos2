@@ -7,14 +7,24 @@ package Presentacion;
 
 import Negocio.Tracker;
 import Model.Peer;
+import Model.enumStateFile;
 import Model.enumStateUser;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
@@ -60,6 +70,10 @@ public class Principal extends javax.swing.JFrame {
         btnSubir = new javax.swing.JToggleButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tableFiles = new javax.swing.JTable();
+        jLabel3 = new javax.swing.JLabel();
+        nameGenerate = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        labelSelected = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -146,17 +160,17 @@ public class Principal extends javax.swing.JFrame {
 
         tableFiles.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null}
+                {null, null}
             },
             new String [] {
-                "Nombre"
+                "Nombre", "Existencia"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class
+                java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false
+                false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -168,6 +182,14 @@ public class Principal extends javax.swing.JFrame {
             }
         });
         jScrollPane2.setViewportView(tableFiles);
+
+        jLabel3.setText("Nombre archivo a generar: ");
+
+        nameGenerate.setText("-");
+
+        jLabel5.setText("Archivo seleccionado: ");
+
+        labelSelected.setText("-");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -181,8 +203,18 @@ public class Principal extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSubir, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(31, 31, 31)
+                        .addComponent(nameGenerate))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel5)
+                        .addGap(50, 50, 50)
+                        .addComponent(labelSelected)))
+                .addGap(0, 8, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -191,9 +223,17 @@ public class Principal extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(btnExaminar)
                     .addComponent(btnSubir))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(5, 5, 5)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(labelSelected))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(nameGenerate))
+                .addGap(0, 51, Short.MAX_VALUE))
         );
 
         PanelDistri.addTab("Subida", jPanel2);
@@ -285,16 +325,67 @@ public class Principal extends javax.swing.JFrame {
     //Escoger un archivo 
     public void selectFile() {
         JFileChooser chooser = new JFileChooser("./");
-        // optionally set chooser options ...
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File f = chooser.getSelectedFile();
-            // read  and/or display the file somehow. ....
-            listaArchivos.add(f);
-            DefaultTableModel model = (DefaultTableModel) tableFiles.getModel();
-            model.addRow(new Object[]{f.getName()});
+            
+            try {
+                readFile(f);
+            } catch (IOException ex) {
+                System.out.println("Problema leyendo el arvhivo");
+            }
+            
         } else {
             // user changed their mind
         }
+    }
+    
+//    public static ArrayList<String> readClientFile(String file_Name) throws IOException {
+//        ArrayList<String> nombres = new ArrayList<String>();
+//        String chain;
+//        FileReader f = new FileReader(file_Name);
+//        BufferedReader b = new BufferedReader(f);
+//
+//        while ((chain = b.readLine()) != null) {
+//
+//                nombres.add(chain);
+//        }
+//        b.close();
+//
+//        return nombres;
+//    }
+    
+    private void readFile(File file) throws FileNotFoundException, IOException{
+        
+        
+        BufferedReader br = new BufferedReader(new FileReader(file.getName()));
+        DefaultTableModel model = (DefaultTableModel) tableFiles.getModel();
+        labelSelected.setText(file.getName());
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+            int countLine = 0;
+
+            while (line != null) {
+                if(countLine++==0)nameGenerate.setText(line);
+                sb.append(line);
+                sb.append("\n");
+                line = br.readLine();
+                if (line!=null) {
+                    //System.out.println(line);
+                    File f = new File("./"+line+".txt");
+                    if(f.exists() && !f.isDirectory()) { 
+                        model.addRow(new Object[]{line, "Encontrado"});
+                    }else{
+                        model.addRow(new Object[]{line, "No encontrado"});
+                    }
+                }
+            }
+            String completo =  sb.toString();
+        } finally {
+            br.close();
+        }
+        
+    
     }
     
     
@@ -338,11 +429,15 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable jTable2;
+    private javax.swing.JLabel labelSelected;
+    private javax.swing.JLabel nameGenerate;
     private javax.swing.JTable tableFiles;
     // End of variables declaration//GEN-END:variables
 }

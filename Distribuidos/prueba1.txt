@@ -1,8 +1,0 @@
-prueba1.txt linea-1
-prueba1.txt linea-2
-prueba1.txt linea-3
-prueba1.txt linea-4
-prueba1.txt linea-5
-prueba1.txt linea-6
-prueba1.txt linea-7
-prueba1.txt linea-8
