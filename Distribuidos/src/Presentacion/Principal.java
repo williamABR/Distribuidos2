@@ -18,8 +18,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -35,7 +40,12 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Principal extends javax.swing.JFrame {
     
-    public List<File> listaArchivos = new ArrayList<>();
+    private final String SI_EXISTE = "Encontrado";
+    private final String NO_EXISTE = "No encontrado";
+    private final int TAM_ESTANDAR = 8;
+    
+    private List<File> listaArchivos = new ArrayList<>();
+    private HashMap<String, List<File>> hashMapArchivos = new HashMap<>();
     private Tracker tracker;
 
     /**
@@ -44,6 +54,7 @@ public class Principal extends javax.swing.JFrame {
     public Principal() {
         this.tracker = new Tracker(this);
         initComponents();
+        btnSubir.setEnabled(false);
         centreWindow(Principal.this);
         clearTables();
     }
@@ -61,7 +72,7 @@ public class Principal extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
+        btnDescargar = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
@@ -81,7 +92,12 @@ public class Principal extends javax.swing.JFrame {
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jButton1.setText("Descargar");
+        btnDescargar.setText("Descargar");
+        btnDescargar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDescargarActionPerformed(evt);
+            }
+        });
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -121,7 +137,7 @@ public class Principal extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(btnDescargar)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 392, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -134,7 +150,7 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(btnDescargar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(138, 138, 138))
@@ -258,13 +274,24 @@ public class Principal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSubirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubirActionPerformed
-        System.out.println(listaArchivos.size());
+        System.out.println(hashMapArchivos.keySet());
+        for (int i = 0; i < hashMapArchivos.get(nameGenerate.getText()).size(); i++) {
+            System.out.println(hashMapArchivos.get(nameGenerate.getText()).get(i).getName());
+        }
     }//GEN-LAST:event_btnSubirActionPerformed
 
     private void btnExaminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExaminarActionPerformed
         clearTables();
         selectFile();
     }//GEN-LAST:event_btnExaminarActionPerformed
+
+    private void btnDescargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescargarActionPerformed
+        try {
+            formarArchivoGenerado();
+        } catch (IOException ex) {
+            System.out.println("No se pudo descargar el archivo" + ex);
+        }
+    }//GEN-LAST:event_btnDescargarActionPerformed
 
     
     
@@ -299,6 +326,7 @@ public class Principal extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Principal().setVisible(true);
+                
             }
         });
     }
@@ -340,22 +368,11 @@ public class Principal extends javax.swing.JFrame {
         }
     }
     
-//    public static ArrayList<String> readClientFile(String file_Name) throws IOException {
-//        ArrayList<String> nombres = new ArrayList<String>();
-//        String chain;
-//        FileReader f = new FileReader(file_Name);
-//        BufferedReader b = new BufferedReader(f);
-//
-//        while ((chain = b.readLine()) != null) {
-//
-//                nombres.add(chain);
-//        }
-//        b.close();
-//
-//        return nombres;
-//    }
-    
+    //Leer archivo
     private void readFile(File file) throws FileNotFoundException, IOException{
+        
+        listaArchivos.clear();
+        hashMapArchivos.clear();
         
         BufferedReader br = new BufferedReader(new FileReader(file.getName()));
         DefaultTableModel model = (DefaultTableModel) tableFiles.getModel();
@@ -367,7 +384,7 @@ public class Principal extends javax.swing.JFrame {
             int countLine = 0;
 
             while (line != null) {
-                if(countLine++==0)nameGenerate.setText(line);
+                if(countLine++==0)nameGenerate.setText(line + ".txt");
                 sb.append(line);
                 sb.append("\n");
                 line = br.readLine();
@@ -375,10 +392,12 @@ public class Principal extends javax.swing.JFrame {
                     //System.out.println(line);
                     File f = new File("./"+line+".txt");
                     if(f.exists() && !f.isDirectory()) { 
-                        model.addRow(new Object[]{line, "Encontrado"});
+                        model.addRow(new Object[]{line, SI_EXISTE});
                     }else{
-                        model.addRow(new Object[]{line, "No encontrado"});
+                        model.addRow(new Object[]{line, NO_EXISTE});
                     }
+                    listaArchivos.add(f);
+                    hashMapArchivos.put(nameGenerate.getText(), listaArchivos);
                 }
             }
             
@@ -391,10 +410,51 @@ public class Principal extends javax.swing.JFrame {
         }    
     }
     
+    //Comprobar si todos los archivos dentro del archivo descriptor existen
     public boolean isSubidaOk(){
         DefaultTableModel model = (DefaultTableModel) tableFiles.getModel(); 
-        for (int i = 0; i < model.getRowCount(); i++) if (model.getValueAt(i, 1).equals("No encontrado"))return false;
+        for (int i = 0; i < model.getRowCount(); i++) if (model.getValueAt(i, 1).equals(NO_EXISTE)){ hashMapArchivos.clear(); return false;};
+        
         return true;
+    }
+    
+    //Generar el archivo para ser descargado 
+    public void formarArchivoGenerado() throws IOException{
+        
+        String nameFile = NO_EXISTE;
+
+        for(Map.Entry<String, List<File>> entry : hashMapArchivos.entrySet()) {
+            String key = entry.getKey();
+            nameFile = key;
+        }
+        
+        if (!nameFile.equals(NO_EXISTE)) {
+            List<String> lines = mixFiles();
+            String[] strarray = new String[lines.size()];
+            lines.toArray(strarray);
+            lines = Arrays.asList(strarray);
+            Path file = Paths.get(nameFile);
+            Files.write(file, lines, Charset.forName("UTF-8"));
+            System.out.println(" -> Archivo creado con éxito!");
+        }else{
+            System.err.println("No existe fuente para descargar archivos.");
+            System.err.println("(Ya probaste subir archivos primero?)");
+        }
+        
+        
+
+    }
+    
+    public List<String> mixFiles(){
+        
+        List<String> lineasArchivos = new ArrayList<>();
+        
+        for (int i = 0; i < TAM_ESTANDAR ; i++) {
+            String agregar = "a"+i;
+            lineasArchivos.add(agregar);
+        }
+                
+        return lineasArchivos;
     }
     
     public void updatePeers(List<Peer> swarm) {
@@ -431,9 +491,9 @@ public class Principal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane PanelDistri;
+    private javax.swing.JButton btnDescargar;
     private javax.swing.JToggleButton btnExaminar;
     private javax.swing.JToggleButton btnSubir;
-    private javax.swing.JButton jButton1;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
