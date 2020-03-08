@@ -1,4 +1,4 @@
-# Distribuidos2
+# Distribuidos
 
 Proyecto final Introducción a Sistemas Distribuidos.
 Memoria historica.
