@@ -1,0 +1,8 @@
+prueba10.txt linea-1
+prueba10.txt linea-2
+prueba10.txt linea-3
+prueba10.txt linea-4
+prueba10.txt linea-5
+prueba10.txt linea-6
+prueba10.txt linea-7
+prueba10.txt linea-8
